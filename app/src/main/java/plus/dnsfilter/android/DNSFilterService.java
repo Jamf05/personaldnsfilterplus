@@ -28,6 +28,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -790,7 +791,11 @@ public class DNSFilterService extends VpnService  {
 			registerReceiver(ConnectionChangeReceiver.getInstance(), new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 
 			if (android.os.Build.VERSION.SDK_INT < 34)
-				registerReceiver(NotificationReceiver.getInstance(), new IntentFilter("pause_resume"));
+                registerReceiver(
+                    NotificationReceiver.getInstance(),
+                    new IntentFilter("pause_resume"),
+                    Context.RECEIVER_NOT_EXPORTED
+                );
 			else
 				registerReceiver(NotificationReceiver.getInstance(), new IntentFilter("pause_resume"),RECEIVER_EXPORTED);
 

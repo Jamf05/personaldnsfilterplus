@@ -5,7 +5,7 @@ android {
 
     defaultConfig {
         applicationId "plus.dnsfilter.android"
-        minSdkVersion 17
+        minSdkVersion 29
         //noinspection EditedTargetSdkVersion
         targetSdkVersion 36
     }
