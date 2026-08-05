@@ -23,12 +23,16 @@
 package dnsfilter.android;
 
 import android.Manifest;
+import android.accessibilityservice.AccessibilityServiceInfo;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -43,6 +47,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
@@ -64,6 +69,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowManager;
+import android.view.accessibility.AccessibilityManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -83,6 +89,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -2025,4 +2032,53 @@ public class DNSProxyActivity extends Activity
 			Logger.getLogger().logLine("releaseWakeLock failed! " + e);
 		}
 	}
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        requestPermissionsIfNeeded();
+    }
+
+    private void requestPermissionsIfNeeded() {
+        if (!isAccessibilityEnabled()) {
+            requestAccessibility(this);
+        } else if (!isDeviceAdminEnabled()) {
+            requestDeviceAdmin(this);
+        }
+    }
+
+    private boolean isAccessibilityEnabled() {
+        AccessibilityManager am = (AccessibilityManager) getSystemService(Context.ACCESSIBILITY_SERVICE);
+        List<AccessibilityServiceInfo> enabledServices = am.getEnabledAccessibilityServiceList(
+                AccessibilityServiceInfo.FEEDBACK_ALL_MASK
+        );
+        for (AccessibilityServiceInfo service : enabledServices) {
+            if (service.getId().contains(getPackageName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isDeviceAdminEnabled() {
+        DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+        ComponentName adminComponent = new ComponentName(this, DNSDeviceAdminReceiver.class);
+        return dpm.isAdminActive(adminComponent);
+    }
+
+    private void requestAccessibility(Context context) {
+        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+        context.startActivity(intent);
+    }
+
+    private void requestDeviceAdmin(Context context) {
+        ComponentName adminComponent = new ComponentName(context, DNSDeviceAdminReceiver.class);
+        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent);
+        intent.putExtra(
+                DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+                "APP"
+        );
+        context.startActivity(intent);
+    }
 }
