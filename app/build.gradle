@@ -4,7 +4,7 @@ android {
     compileSdk 36
 
     defaultConfig {
-        applicationId "dnsfilter.android"
+        applicationId "plus.dnsfilter.android"
         minSdkVersion 17
         //noinspection EditedTargetSdkVersion
         targetSdkVersion 36
@@ -20,7 +20,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
-    namespace 'dnsfilter.android'
+    namespace 'plus.dnsfilter.android'
 }
 
 

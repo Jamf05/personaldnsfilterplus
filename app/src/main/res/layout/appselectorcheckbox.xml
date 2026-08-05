@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-        <dnsfilter.android.PaddedCheckBox
+        <plus.dnsfilter.android.PaddedCheckBox
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -10,5 +10,5 @@
             android:checked="false"
             android:textColor="#424242"
             android:textSize="14sp">
-        </dnsfilter.android.PaddedCheckBox>
+        </plus.dnsfilter.android.PaddedCheckBox>
 

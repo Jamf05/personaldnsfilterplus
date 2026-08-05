@@ -106,7 +106,7 @@
         </LinearLayout>
 
     </LinearLayout>
-    <dnsfilter.android.PaddedCheckBox
+    <plus.dnsfilter.android.PaddedCheckBox
         android:id="@+id/activeChk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
