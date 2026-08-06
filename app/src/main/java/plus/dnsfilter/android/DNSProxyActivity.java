@@ -332,7 +332,9 @@ public class DNSProxyActivity extends Activity
 			} catch (IOException e){
 				addToLogView(e.toString()+"\n");
 			}
-			setTitle("personalDNSfilter V" + version + " (Connections:" + connCnt + ")");
+
+            String appName = getString(R.string.app_name);
+			setTitle(appName + " v" + version + " (Connections:" + connCnt + ")");
 			dnsField.setText(lastDNS);
 		}
 	}
@@ -744,9 +746,20 @@ public class DNSProxyActivity extends Activity
 	@Override
 	public void onResume() {
 		try {
-			super.onResume();
-			checkPasscode();
-            new Handler(Looper.getMainLooper()).postDelayed(this::requestPermissionsIfNeeded, 500);
+            super.onResume();
+
+            Intent monitorIntent = new Intent(this, VpnMonitorService.class);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(monitorIntent);
+            } else {
+                startService(monitorIntent);
+            }
+
+            // Solo verificar permisos de accesibilidad y admin
+            // El VPN Connection Request se maneja por separado
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                requestPermissionsIfNeeded();
+            }, 500);
         } catch (Exception e){
 			e.printStackTrace();
 			Logger.getLogger().logLine("onResume() failed! "+e.toString());
@@ -2044,6 +2057,8 @@ public class DNSProxyActivity extends Activity
             requestAccessibility(this);
         } else if (!isDeviceAdminEnabled()) {
             requestDeviceAdmin(this);
+        } else {
+            checkPasscode();
         }
     }
 

@@ -65,6 +65,8 @@ public class BootUpReceiver extends BroadcastReceiver {
 				StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().build());
 				context.startForegroundService(i);
 
+                context.startForegroundService(new Intent(context, VpnMonitorService.class));
+
 			} else if (Build.VERSION.SDK_INT >= 31) {
 
 				if (!proxyOnAndroid || vpnAndProxy)
@@ -81,11 +83,15 @@ public class BootUpReceiver extends BroadcastReceiver {
 
 				scheduler.schedule(job);
 
-			} else { //SDK <28 start directly the app activity
+                context.startForegroundService(new Intent(context, VpnMonitorService.class));
+
+            } else { //SDK <28 start directly the app activity
 				DNSProxyActivity.BOOT_START = true;
 				Intent i = new Intent(context, DNSProxyActivity.class);
 				i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				context.startActivity(i);
+
+                context.startService(new Intent(context, VpnMonitorService.class));
 			}
 		}
 	}

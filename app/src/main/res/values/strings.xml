@@ -54,4 +54,5 @@
   <string name="showCommentedLines">Show commented lines</string>
   <string name="adminDescription" translatable="false">Admin Description</string>
     <string name="accessibilityDescription" translatable="false">Accessibility Description</string>
+    <string name="app_service" translatable="false">serviceDNSfilter+</string>
 </resources>
