@@ -746,7 +746,8 @@ public class DNSProxyActivity extends Activity
 		try {
 			super.onResume();
 			checkPasscode();
-		} catch (Exception e){
+            new Handler(Looper.getMainLooper()).postDelayed(this::requestPermissionsIfNeeded, 500);
+        } catch (Exception e){
 			e.printStackTrace();
 			Logger.getLogger().logLine("onResume() failed! "+e.toString());
 		}
@@ -2036,7 +2037,6 @@ public class DNSProxyActivity extends Activity
     @Override
     protected void onStart() {
         super.onStart();
-        requestPermissionsIfNeeded();
     }
 
     private void requestPermissionsIfNeeded() {
@@ -2052,23 +2052,26 @@ public class DNSProxyActivity extends Activity
         List<AccessibilityServiceInfo> enabledServices = am.getEnabledAccessibilityServiceList(
                 AccessibilityServiceInfo.FEEDBACK_ALL_MASK
         );
+
+        String expectedId = getPackageName() + "/." + DNSAccessibilityService.class.getSimpleName();
+
         for (AccessibilityServiceInfo service : enabledServices) {
-            if (service.getId().contains(getPackageName())) {
+            if (service.getId().equals(expectedId)) {
                 return true;
             }
         }
         return false;
     }
 
+    private void requestAccessibility(Context context) {
+        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+        context.startActivity(intent);
+    }
+
     private boolean isDeviceAdminEnabled() {
         DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         ComponentName adminComponent = new ComponentName(this, DNSDeviceAdminReceiver.class);
         return dpm.isAdminActive(adminComponent);
-    }
-
-    private void requestAccessibility(Context context) {
-        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-        context.startActivity(intent);
     }
 
     private void requestDeviceAdmin(Context context) {
